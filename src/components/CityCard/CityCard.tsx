@@ -1,16 +1,28 @@
 import React, { FC } from 'react';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Card, CardActions, CardContent, CardMedia, Button, Typography, IconButton } from '@mui/material';
 import ThermostatOutlinedIcon from '@mui/icons-material/ThermostatOutlined';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { convertKelvinToCelsius } from '../../helpers/convertKelvinToCelsius';
+import { fetchWeatherByCity, removeCity } from '../../store/weatherSlice';
+import { AppDispatch } from '../../store/store';
+import { SHOW_MORE_BTN, UPDATE_WEATHER_BTN } from '../../constants';
+import { ICity } from '../../interfaces';
 
-type City = any
+interface IProps {
+    city: ICity
+}
 
-export const CityCard: FC<City> = ({ city }) => {
+export const CityCard: FC<IProps> = ({ city }) => {
 
-    const mainInfo = () => {
+    const dispatch = useDispatch<AppDispatch>()
+
+    const mainInfo = (): JSX.Element => {
         return (
-            <><ThermostatOutlinedIcon />
+            <>
+                <ThermostatOutlinedIcon />
                 {convertKelvinToCelsius(city.main.temp)}
                 {' '} {city.weather[0].main}
             </>
@@ -18,7 +30,10 @@ export const CityCard: FC<City> = ({ city }) => {
     }
 
     return (
-        <Card sx={{ maxWidth: 345 }} style={{ marginTop: 50 }}>
+        <Card sx={{ maxWidth: 345 }} style={{ position: 'relative' }}>
+            <IconButton aria-label="delete" onClick={() => dispatch(removeCity(city))} style={{ position: 'absolute', top: 10, right: 10 }}>
+                <DeleteIcon color='primary' />
+            </IconButton>
             <CardMedia
                 component="img"
                 height="140"
@@ -38,7 +53,8 @@ export const CityCard: FC<City> = ({ city }) => {
                 </Typography>
             </CardContent>
             <CardActions style={{ display: 'flex', justifyContent: 'space-around' }}>
-                <Button size="small" variant="contained">Update current weather</Button>
+                <Link to={`/cities/${city.id}`}><Button size="small">{SHOW_MORE_BTN}</Button></Link>
+                <Button size="small" variant="contained" onClick={() => dispatch(fetchWeatherByCity(city.name))}>{UPDATE_WEATHER_BTN}</Button>
             </CardActions>
         </Card>
     );

@@ -1,17 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import { HomePage } from './pages/HomePage/HomePage'
-import { CityPage } from './pages/CityPage/CityPage'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+
+import { HomePage } from './pages/HomePage/HomePage';
+import { CityPage } from './pages/CityPage/CityPage';
+import { fetchWeatherByCity } from './store/weatherSlice';
+import { AppDispatch, RootState } from './store/store';
 
 import './App.css';
 
 function App() {
+  const loading = useSelector((state: RootState) => state.weather.loading)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    const cityName: string[] = JSON.parse(localStorage.getItem('cities') || '[]')
+    cityName.forEach((city: string) => dispatch(fetchWeatherByCity(city)))
+  }, [])
+
   return (
     <div className="App">
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/cities/:cityId' element={<CityPage />} />
       </Routes>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }
