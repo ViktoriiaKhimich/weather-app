@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import weatherReducer from '../store/weatherSlice';
+import notifReducer from '../store/notificationSlice';
 
 export const store = configureStore({
     reducer: {
         weather: weatherReducer,
+        notif: notifReducer,
     }
 })
 

@@ -1,8 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
+import { addNotication } from '../../store/notificationSlice';
 
 interface IProps {
     severity: any;
@@ -10,7 +13,23 @@ interface IProps {
 }
 
 export const Notification: FC<IProps> = ({ severity, message }) => {
-    const [open, setOpen] = React.useState<boolean>(false);
+    const isOpen = useSelector((state: RootState) => state.notif.isOpen)
+
+    const [open, setOpen] = React.useState<boolean>(isOpen);
+
+    const dispatch = useDispatch<AppDispatch>()
+
+    useEffect(() => {
+        if (isOpen) {
+            setTimeout(() => {
+                dispatch(addNotication({
+                    severity: '',
+                    message: '',
+                    isOpen: false
+                }))
+            }, 4000)
+        }
+    }, [isOpen])
 
     const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
         props,
@@ -27,8 +46,8 @@ export const Notification: FC<IProps> = ({ severity, message }) => {
     };
 
     return (
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} style={{ marginTop: 10 }}>
-            <Alert onClose={handleClose} severity={severity} sx={{ width: '30%' }} action={
+        <Snackbar open={open} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} autoHideDuration={6000} onClose={handleClose} style={{ marginTop: 10 }}>
+            <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }} action={
                 <React.Fragment>
                     <IconButton
                         aria-label="close"

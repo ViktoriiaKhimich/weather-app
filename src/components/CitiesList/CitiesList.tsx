@@ -15,7 +15,7 @@ export const CitiesList: FC = () => {
 
     return (
         <div style={{ margin: 30 }}>
-            {/* {error && <Notification severity='error' message={error.response.data.message} />} */}
+            {/* <Notification /> */}
             <Grid container rowSpacing={3} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                 {cities.length && cities.map((city) => <Grid item xs={3} key={city.id}><CityCard city={city} /></Grid>)}
             </Grid>

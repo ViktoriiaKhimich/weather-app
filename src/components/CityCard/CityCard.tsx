@@ -23,7 +23,7 @@ export const CityCard: FC<IProps> = ({ city }) => {
         return (
             <>
                 <ThermostatOutlinedIcon />
-                {convertKelvinToCelsius(city.main.temp)}
+                {city.main.temp}
                 {' '} {city.weather[0].main}
             </>
         )
