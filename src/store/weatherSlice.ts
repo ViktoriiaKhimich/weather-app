@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction, current } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { addNotication } from './notificationSlice';
 
@@ -12,14 +12,7 @@ interface IWeatherState {
     cities: ICity[],
     loading: boolean,
     error: IError | null,
-    // notification: {
-    //     severity: any;
-    //     message: string;
-    //     open: boolean;
-    // }
 }
-
-
 
 export const fetchWeatherByCity = createAsyncThunk(
     'weather/fetchWeatherByCity',
@@ -42,11 +35,6 @@ const initialState: IWeatherState = {
     cities: [],
     loading: false,
     error: null,
-    // notification: {
-    //     severity: '',
-    //     message: '',
-    //     open: false,
-    // },
 }
 
 const weatherSlice = createSlice({
@@ -64,21 +52,17 @@ const weatherSlice = createSlice({
     extraReducers: {
         [fetchWeatherByCity.pending.type]: (state) => { state.loading = true },
         [fetchWeatherByCity.fulfilled.type]: (state, action: PayloadAction<ICity>) => {
-            console.log('before', current(state.cities));
             addToLS(action.payload.name)
             state.loading = false;
             const city = state.cities.find((city) => city.name === action.payload.name)
             if (city) {
-                state.cities.map((item) => {
-                    if (item.name === city.name) {
-                        return item = action.payload
-                    }
-                    return item
+                const newState = state.cities.map((item) => {
+                    return item.name === action.payload.name ? action.payload : item
                 })
+                state.cities = newState
             } else {
                 state.cities.push(action.payload)
             }
-            console.log('after', current(state.cities));
         },
         [fetchWeatherByCity.rejected.type]: (state, action) => {
             state.error = action.payload.response.data;

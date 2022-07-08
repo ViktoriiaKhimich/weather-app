@@ -1,20 +1,31 @@
 import React, { FC, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store';
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 
 import { Input, StyledInputBase } from './styles';
 import { fetchWeatherByCity } from '../../store/weatherSlice';
+import { addNotication } from '../../store/notificationSlice';
 import { SEARCH_INPUT_PLACEHOLDER, SEARCH_INPUT_TEXT } from '../../constants';
+import { findCityByName } from '../../helpers/findCityByName';
 
 export const SearchAppBar: FC = () => {
     const [searchedCity, setSearchedCity] = useState<string>('')
+    const cities = useSelector((state: RootState) => state.weather.cities)
 
     const dispatch = useDispatch<AppDispatch>()
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault()
-        dispatch(fetchWeatherByCity(searchedCity))
+        if (!findCityByName(cities, searchedCity)) {
+            dispatch(fetchWeatherByCity(searchedCity))
+        } else {
+            dispatch(addNotication({
+                severity: 'error',
+                isOpen: true,
+                message: `City ${searchedCity} is already in your list!`
+            }))
+        }
         setSearchedCity('')
     }
 

@@ -38,7 +38,7 @@ export const CityCard: FC<IProps> = ({ city }) => {
                 component="img"
                 height="140"
                 image={`http://openweathermap.org/img/w/${city.weather[0].icon}.png`}
-                alt="green iguana"
+                alt="weather"
             />
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">

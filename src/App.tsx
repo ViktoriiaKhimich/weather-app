@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 import { HomePage } from './pages/HomePage/HomePage';
 import { CityPage } from './pages/CityPage/CityPage';
+import { Notification } from './components/Notification/Notification';
 import { fetchWeatherByCity } from './store/weatherSlice';
 import { AppDispatch, RootState } from './store/store';
-import { Notification } from './components/Notification/Notification';
 
 import './App.css';
-import { notifSlice } from './store/notificationSlice';
 
 function App() {
   const loading = useSelector((state: RootState) => state.weather.loading)
