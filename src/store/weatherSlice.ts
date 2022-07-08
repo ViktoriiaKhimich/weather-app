@@ -2,23 +2,41 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { addNotication } from './notificationSlice';
 
-import { addToLS } from '../helpers/addToLS';
-import { removeFromLS } from '../helpers/removeFromLS';
-import { ICity, IError } from '../interfaces';
+import { addToLS } from '../helpers/localStorage/addToLS';
+import { removeFromLS } from '../helpers/localStorage/removeFromLS';
+import { ICity, IError, IDailyWeather } from '../interfaces';
 
 const API_KEY = 'cda98f771710dfa64f48f02df183ada6'
 
 interface IWeatherState {
-    cities: ICity[],
-    loading: boolean,
-    error: IError | null,
+    cities: ICity[];
+    loading: boolean;
+    error: IError | null;
+    dailyWeather: IDailyWeather | null;
 }
 
 export const fetchWeatherByCity = createAsyncThunk(
     'weather/fetchWeatherByCity',
     async (cityName: string, { rejectWithValue, dispatch }) => {
         try {
-            const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${cityName}&APPID=${API_KEY}&units='metric'`)
+            const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&APPID=${API_KEY}`)
+            return response.data
+        } catch (error: any) {
+            dispatch(addNotication({
+                severity: 'error',
+                message: error.response.data.message,
+                isOpen: true
+            }))
+            return rejectWithValue(error)
+        }
+    }
+)
+
+export const fetchDailyWeatherByCity = createAsyncThunk(
+    'weather/fetchDailyWeatherByCity',
+    async ({ lat, lon }: { lat: number, lon: number }, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await axios.get(`http://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,current,hourly&units=metric&appid=cda98f771710dfa64f48f02df183ada6`)
             return response.data
         } catch (error: any) {
             dispatch(addNotication({
@@ -35,6 +53,7 @@ const initialState: IWeatherState = {
     cities: [],
     loading: false,
     error: null,
+    dailyWeather: null,
 }
 
 const weatherSlice = createSlice({
@@ -68,6 +87,15 @@ const weatherSlice = createSlice({
             state.error = action.payload.response.data;
             state.loading = false;
         },
+        [fetchDailyWeatherByCity.pending.type]: (state) => { state.loading = true },
+        [fetchDailyWeatherByCity.fulfilled.type]: (state, action: PayloadAction<IDailyWeather>) => {
+            state.loading = false;
+            state.dailyWeather = action.payload;
+        },
+        [fetchDailyWeatherByCity.rejected.type]: (state, action) => {
+            state.error = action.payload.response.data;
+            state.loading = false;
+        }
     },
 })
 

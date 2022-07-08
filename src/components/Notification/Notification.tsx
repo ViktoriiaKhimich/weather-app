@@ -12,6 +12,13 @@ interface IProps {
     message: string;
 }
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 export const Notification: FC<IProps> = ({ severity, message }) => {
     const isOpen = useSelector((state: RootState) => state.notif.isOpen)
 
@@ -30,13 +37,6 @@ export const Notification: FC<IProps> = ({ severity, message }) => {
             }, 4000)
         }
     }, [isOpen])
-
-    const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-        props,
-        ref,
-    ) {
-        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-    });
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string): void => {
         if (reason === 'clickaway') {

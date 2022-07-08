@@ -5,7 +5,6 @@ import { Card, CardActions, CardContent, CardMedia, Button, Typography, IconButt
 import ThermostatOutlinedIcon from '@mui/icons-material/ThermostatOutlined';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { convertKelvinToCelsius } from '../../helpers/convertKelvinToCelsius';
 import { fetchWeatherByCity, removeCity } from '../../store/weatherSlice';
 import { AppDispatch } from '../../store/store';
 import { SHOW_MORE_BTN, UPDATE_WEATHER_BTN } from '../../constants';
@@ -23,7 +22,7 @@ export const CityCard: FC<IProps> = ({ city }) => {
         return (
             <>
                 <ThermostatOutlinedIcon />
-                {city.main.temp}
+                {city.main.temp}°C
                 {' '} {city.weather[0].main}
             </>
         )
@@ -48,8 +47,8 @@ export const CityCard: FC<IProps> = ({ city }) => {
                     {mainInfo()}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Min temp:{convertKelvinToCelsius(city.main.temp_min)}
-                    {' '} Max temp:{convertKelvinToCelsius(city.main.temp_max)}
+                    Min temp: {city.main.temp_min}°C
+                    {' '} Max temp: {city.main.temp_max}°C
                 </Typography>
             </CardContent>
             <CardActions style={{ display: 'flex', justifyContent: 'space-around' }}>
