@@ -6,11 +6,7 @@
     "singleQuote": true,
     "useTabs": false,
     "tabWidth": 2,
-    "endOfLine": "auto",
-    "max-len": [
-        "error",
-        {
-            "code": 80
-        }
-    ]
+    "arrowParens": "avoid",
+    "endOfLine": "lf",
+    "singleAttributePerLine": true
 }
